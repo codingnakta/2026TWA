@@ -370,7 +370,7 @@ function renderHome(){
   const nAgree = teams.filter(x => latest(x).fields.feedback.principle === true).length;
   const nRev = teams.reduce((a,x) => a + x.versions.length - 1, 0);
 
-  const events = teams.flatMap(team => team.versions.map(v => ({date:v.date, team, v}))).sort((a,b) => (b.date||'').localeCompare(a.date||'')).slice(0,8);
+  const events = teams.flatMap(team => team.versions.map(v => ({date:v.date, team, v}))).sort((a,b) => (b.date||'').localeCompare(a.date||'')).slice(0,4);
   const upd = events.map(e => `<li><span class="d">${esc(e.date || '')}${isNew(e.date) ? `<span class="tag-new">NEW!</span>` : ''}</span>
       <span class="w"><a href="#/t/${encodeURIComponent(e.team.id)}"><b>${e.v.v === 1 ? lbl('upd.first',{team:esc(t(e.team.name))}) : lbl('upd.rev',{team:esc(t(e.team.name)), n:e.v.v})}</b></a>${e.v.v > 1 && t(e.v.note) ? `<small>${esc(t(e.v.note))}</small>` : ''}</span></li>`).join('');
 
