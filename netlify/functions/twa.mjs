@@ -5,6 +5,8 @@
 //   POST { action:'login', password }         → { ok, role:'teacher'|'team', teamId?, passwords? }
 //   POST { action:'save', password, data }    선생님: 전체 저장 (+ passwords: 팀 비밀번호 변경)
 //   POST { action:'save', password, team }    팀: 자기 팀만 저장
+//   POST { action:'note', password, teamId, note }   회의 기록 추가 (서버가 덧붙임)
+//   POST { action:'note-del', password, teamId, id } 회의 기록 삭제
 //
 import { getStore } from '@netlify/blobs';
 
@@ -47,11 +49,42 @@ export default async (req) => {
     return json(r);
   }
 
+  if (body.action === 'note' || body.action === 'note-del') {
+    const data = await store.get('data', { type: 'json' });
+    if (!data) return json({ ok: false, error: 'no_data' }, 409);
+    const teamId = String(body.teamId || '');
+    if (auth.role === 'team' && auth.teamId !== teamId) return json({ ok: false, error: 'forbidden' }, 403);
+    const tm = data.teams.find(x => x.id === teamId);
+    if (!tm) return json({ ok: false, error: 'not_found' }, 404);
+    if (!Array.isArray(tm.notes)) tm.notes = [];
+    if (body.action === 'note-del') {
+      tm.notes = tm.notes.filter(n => n.id !== String(body.id || ''));
+    } else {
+      const n = body.note || {};
+      const txt = n.text && typeof n.text === 'object' ? n.text : {};
+      const ko = String(txt.ko || '').slice(0, 2000), ja = String(txt.ja || '').slice(0, 2000);
+      if (!ko.trim() && !ja.trim()) return json({ ok: false, error: 'empty' }, 400);
+      const text = { ko, ja }; if (ko.trim() && !ja.trim()) text.auto = true;
+      tm.notes.push({
+        id: 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        date: /^\d{4}-\d{2}-\d{2}$/.test(String(n.date || '')) ? n.date : new Date().toISOString().slice(0, 10),
+        by: String(n.by || '').slice(0, 20), at: new Date().toISOString(), text
+      });
+      if (tm.notes.length > 300) tm.notes = tm.notes.slice(-300);
+    }
+    await translatePending(data);
+    await store.setJSON('data', data);
+    return json({ ok: true, data });
+  }
+
   if (body.action === 'save') {
     let data = await store.get('data', { type: 'json' });
+    const serverNotes = {}; (data && data.teams || []).forEach(x => { serverNotes[x.id] = x.notes || []; });
     if (auth.role === 'teacher') {
       if (!body.data || !Array.isArray(body.data.teams)) return json({ ok: false, error: 'bad_data' }, 400);
       data = body.data;
+      // 회의 기록은 note 액션으로만 바뀝니다. 편집 저장이 덮어쓰지 않게 서버 것을 유지합니다.
+      data.teams.forEach(x => { if (serverNotes[x.id]) x.notes = serverNotes[x.id]; });
       if (body.passwords && typeof body.passwords === 'object') {
         for (const [k, v] of Object.entries(body.passwords)) passwords[k] = String(v || '').trim();
         await store.setJSON('passwords', passwords);
@@ -62,6 +95,7 @@ export default async (req) => {
       if (!tm || tm.id !== auth.teamId) return json({ ok: false, error: 'forbidden' }, 403);
       const i = data.teams.findIndex(x => x.id === tm.id);
       if (i < 0) return json({ ok: false, error: 'not_found' }, 404);
+      tm.notes = serverNotes[tm.id] || [];
       data.teams[i] = tm;
     }
     await translatePending(data);

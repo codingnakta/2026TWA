@@ -11,7 +11,7 @@ const DEMO_PW = CONFIG.DEMO_PASSWORDS || null;
 const L = {
   ko: {
     'nav.home':'전체 팀', 'nav.channels':'전체 소통 채널', 'channels.all':'전체 소통 채널', 'channels.all.edit':'전체 소통 채널 (선생님만 편집)',
-    'teams.h':'팀별 TWA', 'channels.h':'우리가 쓰는 소통 채널', 'update.h':'Update', 'counter.h':'Counter',
+    'teams.h':'팀별 TWA', 'channels.h':'우리가 쓰는 소통 채널', 'update.h':'Update', 'counter.h':'Counter', 'stat.meetings':'팀별 회의 횟수',
     'stat.teams':'팀', 'stat.principle':'"결과물에 대한 피드백" 원칙 동의', 'stat.revisions':'해보고 나서 고친 횟수',
     'upd.first':'『{team}』 TWA 최초 작성', 'upd.rev':'『{team}』 제{n}차 개정',
     'sec.comm':'우리는 이렇게 소통한다', 'sec.feedback':'피드백은 이렇게 준다', 'sec.decision':'결정이 안 날 때',
@@ -26,6 +26,7 @@ const L = {
     'sign.h':'서명', 'sign.date':'작성일', 'sign.by':'작성자', 'seal':'인',
     'sign.pad':'서명하기', 'sign.hint':'마우스나 손가락으로 서명해주세요', 'sign.clear':'지우기', 'sign.save':'서명 저장', 'sign.remove':'서명 지우기', 'sign.tap':'눌러서 서명', 'sign.empty':'서명이 비어 있어요.',
     'leave.confirm':'편집 중인 내용이 저장되지 않았어요. 이 페이지를 나가면 사라져요. 나갈까요?',
+    'notes.h':'회의 기록', 'notes.empty':'아직 회의 기록이 없어요. 첫 기록을 남겨보세요!', 'notes.ph':'오늘 회의에서 정한 것, 다음에 할 일을 간단히 적어주세요', 'notes.post':'등록', 'notes.date':'회의 날짜', 'notes.by':'작성자', 'notes.by.none':'팀 전체', 'notes.del':'삭제', 'notes.del.confirm':'이 회의 기록을 지울까요?', 'notes.need':'내용을 적어주세요.', 'notes.ok':'회의 기록을 남겼어요!', 'notes.forbidden':'우리 팀 회의 기록만 쓸 수 있어요.', 'notes.login':'등록을 누르면 팀 비밀번호를 물어봐요.', 'notes.editing':'편집을 끝내면 회의 기록을 쓸 수 있어요.', 'notes.fail':'등록하지 못했어요. 잠시 후 다시 시도해주세요.', 'notes.count':'{n}개',
     'confirm.h':'확인', 'confirm.yes':'네, 나갈게요', 'confirm.no':'계속 편집', 'confirm.ok':'네', 'confirm.cancel':'아니오',
     'ver':'제{n}차', 'ver.short':'{n}차', 'ver.first':'최초 작성', 'ver.history':'변화 과정',
     'diff.toggle':'변경 사항 보기', 'diff.sum':'이전 버전에서 {n}개 항목이 바뀌었어요', 'diff.none':'이전 버전과 같아요', 'prev':'이전',
@@ -54,7 +55,7 @@ const L = {
   },
   ja: {
     'nav.home':'全チーム', 'nav.channels':'全体の連絡チャンネル', 'channels.all':'全体の連絡チャンネル', 'channels.all.edit':'全体の連絡チャンネル（先生のみ編集）',
-    'teams.h':'チーム別TWA', 'channels.h':'使っている連絡チャンネル', 'update.h':'Update', 'counter.h':'Counter',
+    'teams.h':'チーム別TWA', 'channels.h':'使っている連絡チャンネル', 'update.h':'Update', 'counter.h':'Counter', 'stat.meetings':'チーム別ミーティング回数',
     'stat.teams':'チーム', 'stat.principle':'「成果物へのフィードバック」原則に同意', 'stat.revisions':'やってみて直した回数',
     'upd.first':'『{team}』TWA 初回作成', 'upd.rev':'『{team}』第{n}版に改訂',
     'sec.comm':'私たちはこうコミュニケーションする', 'sec.feedback':'フィードバックはこう伝える', 'sec.decision':'決まらないとき',
@@ -69,6 +70,7 @@ const L = {
     'sign.h':'署名', 'sign.date':'作成日', 'sign.by':'作成者', 'seal':'印',
     'sign.pad':'署名する', 'sign.hint':'マウスや指で署名してください', 'sign.clear':'消す', 'sign.save':'署名を保存', 'sign.remove':'署名を削除', 'sign.tap':'押して署名', 'sign.empty':'署名が空です。',
     'leave.confirm':'編集中の内容が保存されていません。このページを離れると消えます。離れますか？',
+    'notes.h':'ミーティング記録', 'notes.empty':'まだ記録がありません。最初の記録を残しましょう！', 'notes.ph':'今日のミーティングで決めたこと、次にやることを簡単に書いてください', 'notes.post':'投稿', 'notes.date':'ミーティングの日', 'notes.by':'書いた人', 'notes.by.none':'チーム全員', 'notes.del':'削除', 'notes.del.confirm':'この記録を削除しますか？', 'notes.need':'内容を書いてください。', 'notes.ok':'記録を残しました！', 'notes.forbidden':'自分のチームの記録だけ書けます。', 'notes.login':'投稿を押すとチームのパスワードを聞かれます。', 'notes.editing':'編集を終えると記録を書けます。', 'notes.fail':'投稿できませんでした。しばらくしてからもう一度お試しください。', 'notes.count':'{n}件',
     'confirm.h':'確認', 'confirm.yes':'はい、離れます', 'confirm.no':'編集を続ける', 'confirm.ok':'はい', 'confirm.cancel':'いいえ',
     'ver':'第{n}版', 'ver.short':'第{n}版', 'ver.first':'初回作成', 'ver.history':'変化の記録',
     'diff.toggle':'変更点を表示', 'diff.sum':'前の版から{n}項目が変わりました', 'diff.none':'前の版と同じです', 'prev':'前回',
@@ -117,7 +119,7 @@ const state = {
   lang: (()=>{ try { return localStorage.getItem('twa-lang') || 'ko'; } catch(e){ return 'ko'; } })(),
   editing:false, draft:null, diff:true, ver:{},
   auth: (()=>{ try { return JSON.parse(sessionStorage.getItem('twa-auth') || 'null'); } catch(e){ return null; } })(),
-  pwEdits:{}, loading:true, demo:null, saveMode:'new', saveNote:''
+  pwEdits:{}, loading:true, demo:null, saveMode:'new', saveNote:'', noteDraft:{}
 };
 const $app = document.getElementById('app');
 
@@ -342,6 +344,13 @@ function banners(){
 }
 
 /* ---------- render: home ---------- */
+const MEETING_ORDER = ['T','Z','O','B'];
+function meetingCells(teams){
+  const initial = tm => ((tm.name && (tm.name.ko || tm.name.ja)) || '?').trim().charAt(0).toUpperCase() || '?';
+  const rank = tm => { const i = MEETING_ORDER.indexOf(initial(tm)); return i < 0 ? MEETING_ORDER.length : i; };
+  return teams.map((tm, idx) => ({tm, idx})).sort((a,b) => rank(a.tm) - rank(b.tm) || a.idx - b.idx)
+    .map(({tm}) => `<a class="mcell" href="#/t/${encodeURIComponent(tm.id)}" title="${esc(t(tm.name))}"><span class="ml">${esc(initial(tm))}</span><span class="mn">${(tm.notes || []).length}</span></a>`).join('');
+}
 function renderHome(){
   const D = data();
   const teams = D.teams;
@@ -416,6 +425,7 @@ function renderHome(){
             <div class="row"><span class="k">${lbl('stat.teams')}</span>${digits(nTeams)}</div>
             <div class="row"><span class="k">${lbl('stat.principle')}</span><span class="digits">${digits(nAgree).replace(/^<span class="digits">|<\/span>$/g,'')}<small>/ ${nTeams}</small></span></div>
             <div class="row"><span class="k">${lbl('stat.revisions')}</span>${digits(nRev)}</div>
+            <div class="row"><span class="k">${lbl('stat.meetings')}</span><div class="mgrid">${meetingCells(teams)}</div></div>
           </div>
         </div>
       </aside>
@@ -553,13 +563,75 @@ function renderTeam(team){
       ${teamEdit}
       ${timeline}
     </div>
-    <div class="doc">${secs}${sign}</div>
+    <div class="doc">${secs}${sign}${notesHtml(DATA.teams.find(x => x.id === team.id) || team)}</div>
     ${state.editing && isTeacher() ? `<div class="danger-zone"><button class="btn danger" data-action="delteam">${lbl('edit.delteam')}</button></div>` : ''}
     ${footer()}
   </main>
   ${editbar()}</div>`;
 }
 
+function notesHtml(team){
+  const notes = (team.notes || []).slice().sort((a,b) => (b.date || '').localeCompare(a.date || '') || (b.at || '').localeCompare(a.at || ''));
+  const canDel = !state.editing && state.auth && canEditTeam(team.id);
+  const list = notes.length ? notes.map(n => {
+    const m = n.by ? memberOf(team, n.by) : null;
+    const who = m ? `<span class="role ${roleClass(m.role)}">${esc(t(m.role)) || lbl('member')}</span><b>${esc(t(m.name)) || '—'}</b>` : `<span class="role etc">${lbl('notes.by.none')}</span>`;
+    return `<li class="note-item"><div class="note-meta"><span class="d">${fmtDate(n.date)}</span>${who}${canDel ? `<button class="x" data-action="note-del" data-id="${esc(n.id)}" title="${lbl('notes.del')}">✕</button>` : ''}</div><div class="note-body">${tv(n.text)}</div></li>`;
+  }).join('') : `<li class="note-empty">${lbl('notes.empty')}</li>`;
+  const d = state.noteDraft[team.id] || {};
+  const form = state.editing
+    ? `<div class="note-hint">✿ ${lbl('notes.editing')}</div>`
+    : `<div class="note-form">
+        <div class="note-form-top">
+          <label>${lbl('notes.date')}<input class="fi" type="date" id="note-date" data-note="date" value="${esc(d.date || today())}"></label>
+          <label>${lbl('notes.by')}<select class="fi" id="note-by" data-note="by"><option value="">${lbl('notes.by.none')}</option>${team.members.map(m => `<option value="${esc(m.key)}" ${d.by === m.key ? 'selected' : ''}>${esc(t(m.name)) || '—'}</option>`).join('')}</select></label>
+        </div>
+        <textarea class="fi" id="note-text" data-note="text" rows="3" placeholder="${esc(lbl('notes.ph'))}">${esc(d.text || '')}</textarea>
+        <div class="note-form-bottom"><span class="note-hint">${state.auth && canEditTeam(team.id) ? '' : '✿ ' + lbl('notes.login')}</span><button class="btn primary" data-action="note-post">✎ ${lbl('notes.post')}</button></div>
+      </div>`;
+  return `<section class="sec notes" id="notes"><span class="ribbon mint">${lbl('notes.h')} <small>${lbl('notes.count',{n:notes.length})}</small></span>${form}<ul class="note-list">${list}</ul></section>`;
+}
+async function postNote(teamId){
+  const team = DATA.teams.find(x => x.id === teamId); if (!team) return;
+  const d = state.noteDraft[teamId] || {};
+  const text = (d.text || '').trim();
+  if (!text){ toast(lbl('notes.need')); const ta = document.getElementById('note-text'); if (ta) ta.focus(); return; }
+  if (state.demo === null){ toast(lbl('loading')); return; }
+  if (!state.auth){
+    if (state.demo && !DEMO_PW) saveAuth({role:'teacher', password:'', passwords:{}});
+    else { openLogin(() => postNote(teamId)); return; }
+  }
+  if (!canEditTeam(teamId)){ toast(lbl('notes.forbidden'), 5000); return; }
+  const note = { id:'n' + Date.now().toString(36) + Math.random().toString(36).slice(2,6), date: d.date || today(), by: d.by || '', at: new Date().toISOString(),
+    text: state.lang === 'ja' ? {ko:'', ja:text} : {ko:text, ja:'', auto:true} };
+  const btn = document.querySelector('[data-action="note-post"]'); if (btn) btn.disabled = true;
+  try {
+    if (state.demo){ (team.notes || (team.notes = [])).push(note); }
+    else {
+      const res = await apiPost({action:'note', password: state.auth.password, teamId, note});
+      if (!(res && res.ok && res.data)){
+        if (res && res.error === 'wrong_password'){ saveAuth(null); toast(lbl('save.pw'), 6000); render(); return; }
+        toast(res && res.error === 'forbidden' ? lbl('notes.forbidden') : lbl('notes.fail'), 5000); if (btn) btn.disabled = false; return;
+      }
+      applyRemote(res.data);
+    }
+    delete state.noteDraft[teamId];
+    render(); toast(lbl('notes.ok'));
+  } catch(e){ toast(lbl('notes.fail'), 5000); if (btn) btn.disabled = false; }
+}
+async function deleteNote(teamId, id){
+  const team = DATA.teams.find(x => x.id === teamId); if (!team || !state.auth || !canEditTeam(teamId)) return;
+  if (!await askConfirm(lbl('notes.del.confirm'))) return;
+  try {
+    if (state.demo){ team.notes = (team.notes || []).filter(n => n.id !== id); }
+    else {
+      const res = await apiPost({action:'note-del', password: state.auth.password, teamId, id});
+      if (!(res && res.ok && res.data)){ toast(lbl('notes.fail'), 5000); return; }
+      applyRemote(res.data);
+    }
+    render();
+  } catch(e){ toast(lbl('notes.fail'), 5000); }
+}
 function sealHtml(ver, key, editable){
   const sig = ver.sig && ver.sig[key];
   if (sig) return `<span class="seal signed ${editable ? 'can' : ''}" ${editable ? `role="button" tabindex="0" data-action="signpad" data-key="${esc(key)}" title="${lbl('sign.pad')}"` : ''}><i>${lbl('seal')}</i><img src="${sig}" alt="${lbl('sign.h')}"></span>`;
@@ -645,7 +717,7 @@ function localLogin(pw){
   const id = Object.keys(DEMO_PW).find(k => k !== 'teacher' && DEMO_PW[k] && DEMO_PW[k] === pw);
   return id ? {ok:true, role:'team', teamId:id} : {ok:false, error:'wrong_password'};
 }
-function openLogin(){
+function openLogin(after){
   openModal(`<h3>♡ ${lbl('login.h')}</h3><p style="margin:0;font-size:13px;color:var(--ink-2)">${lbl('login.d')}</p>
     <form id="loginform"><input class="fi" type="password" id="pw" autocomplete="current-password" style="font-size:18px;letter-spacing:.1em">
     <div id="loginerr" class="err" hidden></div>
@@ -661,7 +733,7 @@ function openLogin(){
         saveAuth({role: res.role, teamId: res.teamId || null, password: pw, passwords: res.passwords || null});
         closeModal();
         toast(res.role === 'teacher' ? lbl('login.ok.teacher') : lbl('login.ok.team',{team: teamName(res.teamId)}));
-        startEdit();
+        if (typeof after === 'function') after(); else startEdit();
       } else { err.textContent = lbl('login.wrong'); err.hidden = false; btn.disabled = false; }
     } catch(ex){ err.textContent = lbl('login.fail'); err.hidden = false; btn.disabled = false; }
   });
@@ -816,6 +888,8 @@ document.addEventListener('click', e => {
     render(); updateCount();
     if (a === 'chan-addrow'){ const inputs = document.querySelectorAll('[data-chan$="/name"]'); const last = inputs[inputs.length-1]; if (last) last.focus(); }
   }
+  else if (a === 'note-post') postNote(route().id);
+  else if (a === 'note-del') deleteNote(route().id, el.dataset.id);
   else if (a === 'confirm-yes') settleConfirm(true);
   else if (a === 'confirm-no') settleConfirm(false);
   else if (a === 'addmember'){ const team = curTeam(); if (team) addMember(team); }
@@ -827,6 +901,8 @@ document.addEventListener('click', e => {
   else if (a === 'ver'){ const r = route(); state.ver[r.id] = +el.dataset.i; render(); }
 });
 document.addEventListener('input', e => {
+  const n = e.target && e.target.dataset && e.target.dataset.note;
+  if (n){ const id = route().id; if (id){ (state.noteDraft[id] || (state.noteDraft[id] = {}))[n] = e.target.value; } return; }
   const el = e.target; if (!el.dataset || !state.draft) return;
   if (el.dataset.chan){
     let arr;

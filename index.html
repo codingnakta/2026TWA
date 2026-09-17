@@ -337,6 +337,32 @@ button.seal{padding:0; font:inherit; font-family:var(--display); font-size:11px}
 .chip.link{text-decoration:none; cursor:pointer; box-shadow:0 2px 0 rgba(0,0,0,.06)}
 .chip.link:hover{background:var(--pink-2); color:#fff}
 @media (max-width:640px){ .chan-head{display:none} .chan-row{grid-template-columns:1fr 1fr auto} }
+
+/* meeting notes */
+.sec.notes{border-color:var(--mint-2); background:#FBFFFE}
+.sec.notes .ribbon small{font-family:var(--body); font-size:11px; opacity:.9; margin-left:4px}
+.note-form{display:flex; flex-direction:column; gap:8px; padding:12px; border:2px dashed var(--mint-2); border-radius:12px; background:#fff}
+.note-form-top{display:flex; flex-wrap:wrap; gap:10px}
+.note-form-top label{display:flex; flex-direction:column; gap:3px; font-family:var(--display); font-size:12px; color:var(--mint-ink)}
+.note-form-top .fi{min-height:0; width:auto; min-width:150px}
+.note-form-bottom{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+.note-hint{font-size:12.5px; color:var(--ink-2)}
+.note-list{list-style:none; margin:14px 0 0; padding:0; display:flex; flex-direction:column; gap:10px}
+.note-item{position:relative; background:#fff; border:2px solid var(--pink-soft); border-radius:4px 14px 14px 14px; padding:10px 14px; box-shadow:2px 2px 0 var(--pink-soft)}
+.note-meta{display:flex; align-items:center; flex-wrap:wrap; gap:6px; font-size:13px; margin-bottom:4px}
+.note-meta .d{font-family:var(--display); color:var(--mint-ink); font-size:12.5px; margin-right:4px}
+.note-meta b{font-weight:500}
+.note-meta .x{margin-left:auto; border:0; background:var(--pink-soft); color:var(--pink-ink); border-radius:50%; width:20px; height:20px; font-size:10px; display:grid; place-items:center; padding:0; cursor:pointer}
+.note-meta .x:hover{background:var(--pink-2); color:#fff}
+.note-body{white-space:pre-wrap; font-size:14.5px}
+.note-empty{color:var(--ink-3); font-size:13.5px; text-align:center; padding:14px 0}
+
+/* meeting counter: one row, four cells */
+.mgrid{display:grid; grid-template-columns:repeat(4,1fr); gap:5px}
+.mcell{display:flex; flex-direction:column; align-items:center; gap:2px; text-decoration:none}
+.mcell .ml{font-family:var(--kedu); font-weight:700; font-size:13px; color:var(--lav-ink)}
+.mcell .mn{width:100%; height:30px; background:#fff; border:2px solid var(--pink); border-radius:5px; font-family:var(--display); font-size:19px; color:var(--pink-ink); display:grid; place-items:center; font-variant-numeric:tabular-nums; box-shadow:inset 0 -3px 0 var(--pink-soft)}
+.mcell:hover .mn{background:var(--pink-soft)}
 </style>
 </head>
 <body>
