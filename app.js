@@ -346,7 +346,13 @@ function banners(){
 /* ---------- render: home ---------- */
 const MEETING_ORDER = ['T','Z','O','B'];
 function meetingCells(teams){
-  const initial = tm => ((tm.name && (tm.name.ko || tm.name.ja)) || '?').trim().charAt(0).toUpperCase() || '?';
+  const CHO = ['G','K','N','D','T','R','M','B','P','S','S','','J','Z','C','K','T','P','H'];
+  const JUNG = ['A','A','Y','Y','E','E','Y','Y','O','W','W','W','Y','U','W','W','W','Y','E','E','I'];
+  const initial = tm => {
+    const nm = ((tm.name && (tm.name.ko || tm.name.ja)) || '?').trim(); const ch = nm.charAt(0); const c = ch.charCodeAt(0);
+    if (c >= 0xAC00 && c <= 0xD7A3){ const i = c - 0xAC00; return CHO[Math.floor(i / 588)] || JUNG[Math.floor((i % 588) / 28)] || '?'; }
+    return ch.toUpperCase() || '?';
+  };
   const rank = tm => { const i = MEETING_ORDER.indexOf(initial(tm)); return i < 0 ? MEETING_ORDER.length : i; };
   return teams.map((tm, idx) => ({tm, idx})).sort((a,b) => rank(a.tm) - rank(b.tm) || a.idx - b.idx)
     .map(({tm}) => `<a class="mcell" href="#/t/${encodeURIComponent(tm.id)}" title="${esc(t(tm.name))}"><span class="ml">${esc(initial(tm))}</span><span class="mn">${(tm.notes || []).length}</span></a>`).join('');

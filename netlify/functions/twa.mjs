@@ -19,11 +19,36 @@ const json = (o, status = 200) => new Response(JSON.stringify(o), {
   status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' }
 });
 
+/* 회의 기록은 팀별로 따로 저장합니다 (키: notes/<teamId>).
+   한 팀의 등록이 다른 팀 데이터나 편집 저장과 부딪히지 않습니다. */
+const notesKey = id => 'notes/' + id;
+async function readNotes(store, team) {
+  const nb = await store.get(notesKey(team.id), { type: 'json' });
+  if (Array.isArray(nb)) return nb;
+  // 예전 방식(팀 데이터 안에 notes)으로 저장된 기록이 있으면 옮깁니다.
+  const old = Array.isArray(team.notes) ? team.notes : [];
+  if (old.length) await store.setJSON(notesKey(team.id), old);
+  return old;
+}
+async function loadData(store) {
+  const data = await store.get('data', { type: 'json' });
+  if (!data || !Array.isArray(data.teams)) return data || null;
+  await Promise.all(data.teams.map(async tm => { tm.notes = await readNotes(store, tm); }));
+  return data;
+}
+async function saveData(store, data) {
+  const lean = JSON.parse(JSON.stringify(data));
+  (lean.teams || []).forEach(tm => { delete tm.notes; });
+  await store.setJSON('data', lean);
+}
+
 export default async (req) => {
-  const store = getStore('twa');
+  // consistency:'strong' — 방금 저장한 내용이 바로 읽히게 합니다.
+  // (기본값은 최대 60초 늦게 읽혀서, 연달아 저장하면 앞의 저장이 덮어써져 사라졌습니다.)
+  const store = getStore({ name: 'twa', consistency: 'strong' });
 
   if (req.method === 'GET') {
-    const data = await store.get('data', { type: 'json' });
+    const data = await loadData(store);
     return json({ ok: true, data: data || null });
   }
   if (req.method !== 'POST') return json({ ok: false, error: 'method' }, 405);
@@ -50,41 +75,39 @@ export default async (req) => {
   }
 
   if (body.action === 'note' || body.action === 'note-del') {
-    const data = await store.get('data', { type: 'json' });
-    if (!data) return json({ ok: false, error: 'no_data' }, 409);
+    const base = await store.get('data', { type: 'json' });
+    if (!base) return json({ ok: false, error: 'no_data' }, 409);
     const teamId = String(body.teamId || '');
     if (auth.role === 'team' && auth.teamId !== teamId) return json({ ok: false, error: 'forbidden' }, 403);
-    const tm = data.teams.find(x => x.id === teamId);
+    const tm = (base.teams || []).find(x => x.id === teamId);
     if (!tm) return json({ ok: false, error: 'not_found' }, 404);
-    if (!Array.isArray(tm.notes)) tm.notes = [];
+    let notes = await readNotes(store, tm);
     if (body.action === 'note-del') {
-      tm.notes = tm.notes.filter(n => n.id !== String(body.id || ''));
+      notes = notes.filter(n => n.id !== String(body.id || ''));
     } else {
       const n = body.note || {};
       const txt = n.text && typeof n.text === 'object' ? n.text : {};
       const ko = String(txt.ko || '').slice(0, 2000), ja = String(txt.ja || '').slice(0, 2000);
       if (!ko.trim() && !ja.trim()) return json({ ok: false, error: 'empty' }, 400);
       const text = { ko, ja }; if (ko.trim() && !ja.trim()) text.auto = true;
-      tm.notes.push({
+      const note = {
         id: 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
         date: /^\d{4}-\d{2}-\d{2}$/.test(String(n.date || '')) ? n.date : new Date().toISOString().slice(0, 10),
         by: String(n.by || '').slice(0, 20), at: new Date().toISOString(), text
-      });
-      if (tm.notes.length > 300) tm.notes = tm.notes.slice(-300);
+      };
+      await translatePending({ note });
+      notes.push(note);
+      if (notes.length > 300) notes = notes.slice(-300);
     }
-    await translatePending(data);
-    await store.setJSON('data', data);
-    return json({ ok: true, data });
+    await store.setJSON(notesKey(teamId), notes);
+    return json({ ok: true, data: await loadData(store) });
   }
 
   if (body.action === 'save') {
     let data = await store.get('data', { type: 'json' });
-    const serverNotes = {}; (data && data.teams || []).forEach(x => { serverNotes[x.id] = x.notes || []; });
     if (auth.role === 'teacher') {
       if (!body.data || !Array.isArray(body.data.teams)) return json({ ok: false, error: 'bad_data' }, 400);
       data = body.data;
-      // 회의 기록은 note 액션으로만 바뀝니다. 편집 저장이 덮어쓰지 않게 서버 것을 유지합니다.
-      data.teams.forEach(x => { if (serverNotes[x.id]) x.notes = serverNotes[x.id]; });
       if (body.passwords && typeof body.passwords === 'object') {
         for (const [k, v] of Object.entries(body.passwords)) passwords[k] = String(v || '').trim();
         await store.setJSON('passwords', passwords);
@@ -95,12 +118,11 @@ export default async (req) => {
       if (!tm || tm.id !== auth.teamId) return json({ ok: false, error: 'forbidden' }, 403);
       const i = data.teams.findIndex(x => x.id === tm.id);
       if (i < 0) return json({ ok: false, error: 'not_found' }, 404);
-      tm.notes = serverNotes[tm.id] || [];
       data.teams[i] = tm;
     }
     await translatePending(data);
-    await store.setJSON('data', data);
-    return json({ ok: true, data });
+    await saveData(store, data);          // 회의 기록은 여기서 저장하지 않습니다
+    return json({ ok: true, data: await loadData(store) });
   }
 
   return json({ ok: false, error: 'unknown_action' }, 400);
