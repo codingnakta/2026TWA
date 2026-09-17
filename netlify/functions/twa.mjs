@@ -6,12 +6,12 @@
 //   POST { action:'save', password, data }    선생님: 전체 저장 (+ passwords: 팀 비밀번호 변경)
 //   POST { action:'save', password, team }    팀: 자기 팀만 저장
 //
-// 환경변수 (Netlify → Site configuration → Environment variables)
-//   DEEPL_API_KEY         DeepL API 키 (선택, 있으면 일본어 자동 번역)
 import { getStore } from '@netlify/blobs';
 
 // 선생님 비밀번호 (하드코딩). 팀 비밀번호는 선생님이 편집 화면에서 정하고 Blobs 에 저장됩니다.
 const TEACHER_PASSWORD = 'teacher';
+// DeepL API 키 (하드코딩). 한국어를 고쳐 저장하면 일본어를 자동 번역합니다. ':fx' 로 끝나면 무료 API 주소를 씁니다.
+const DEEPL_API_KEY = '84bf8db4-3065-4dbc-86c7-b8ad4d49804d:fx';
 
 const json = (o, status = 200) => new Response(JSON.stringify(o), {
   status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' }
@@ -78,7 +78,7 @@ export const config = { path: '/api/twa' };
    페이지는 한국어를 고쳐 저장할 때 {ko:'…', ja:'', auto:true} 로 표시해 둡니다.
    그 칸만 골라 한 번에 번역하고, 결과를 ja 에 채웁니다 (auto:true 는 유지 → 화면에 '자동 번역' 칩). */
 async function translatePending(data) {
-  const key = (process.env.DEEPL_API_KEY || '').trim();
+  const key = DEEPL_API_KEY.trim();
   if (!key) return;
   const targets = [];
   const walk = (o) => {
