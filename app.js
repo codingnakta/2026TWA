@@ -10,7 +10,7 @@ const DEMO_PW = CONFIG.DEMO_PASSWORDS || null;
 
 const L = {
   ko: {
-    'nav.home':'전체 팀', 'nav.overview':'모아보기',
+    'nav.home':'전체 팀', 'nav.overview':'모아보기', 'nav.channels':'전체 소통 채널', 'channels.all':'전체 소통 채널', 'channels.all.edit':'전체 소통 채널 (선생님만 편집)',
     'teams.h':'팀별 TWA', 'wall.h':'모든 팀의 약속', 'channels.h':'우리가 쓰는 소통 채널', 'update.h':'Update', 'counter.h':'Counter',
     'stat.teams':'팀', 'stat.principle':'"결과물에 대한 피드백" 원칙 동의', 'stat.revisions':'해보고 나서 고친 횟수',
     'upd.first':'『{team}』 TWA 최초 작성', 'upd.rev':'『{team}』 제{n}차 개정',
@@ -39,7 +39,7 @@ const L = {
     'edit.langhint':'지금은 한국어 내용을 편집하고 있어요. 위의 언어를 日로 바꾸면 일본어 내용을 편집해요.',
     'edit.langhint.ja':'지금은 일본어 내용을 편집하고 있어요. 비워두면 저장할 때 자동 번역돼요.',
     'edit.changed':'바뀐 팀 {n}', 'edit.cancel':'취소', 'edit.save':'저장…', 'edit.json':'JSON 복사', 'edit.addteam':'팀 추가', 'edit.delteam':'이 팀 삭제',
-    'edit.teamname':'팀명', 'edit.sitetitle':'사이트 제목', 'edit.intro':'소개 문장', 'edit.program':'프로그램명',
+    'edit.teamname':'팀명', 'site.name':'우리의 TWA', 'edit.sitetitle':'대문 제목 (Welcome 아래)', 'edit.intro':'대문 소개 문장', 'edit.program':'프로그램명 (상단 배너)',
     'edit.teampw':'팀 비밀번호 (학생용)', 'edit.teampw.ph':'비워두면 학생 편집 불가', 'edit.teamid':'팀 ID',
     'edit.onlyown':'{team} 팀 페이지만 편집할 수 있어요.',
     'login.h':'비밀번호', 'login.d':'선생님 비밀번호 또는 우리 팀 비밀번호를 넣어주세요.', 'login.go':'들어가기', 'login.wrong':'비밀번호가 맞지 않아요.', 'login.fail':'서버에 연결하지 못했어요. 잠시 후 다시 시도해주세요.', 'login.ok.team':'{team} 팀으로 들어왔어요.', 'login.ok.teacher':'선생님으로 들어왔어요.',
@@ -53,7 +53,7 @@ const L = {
     'foot':'Team Working Agreement ☆ 팀이 스스로 정하고, 해보고, 고친 기록'
   },
   ja: {
-    'nav.home':'全チーム', 'nav.overview':'まとめ',
+    'nav.home':'全チーム', 'nav.overview':'まとめ', 'nav.channels':'全体の連絡チャンネル', 'channels.all':'全体の連絡チャンネル', 'channels.all.edit':'全体の連絡チャンネル（先生のみ編集）',
     'teams.h':'チーム別TWA', 'wall.h':'全チームの約束', 'channels.h':'使っている連絡チャンネル', 'update.h':'Update', 'counter.h':'Counter',
     'stat.teams':'チーム', 'stat.principle':'「成果物へのフィードバック」原則に同意', 'stat.revisions':'やってみて直した回数',
     'upd.first':'『{team}』TWA 初回作成', 'upd.rev':'『{team}』第{n}版に改訂',
@@ -82,7 +82,7 @@ const L = {
     'edit.langhint':'いま韓国語の内容を編集しています。上の言語を「日」に切り替えると日本語の内容を編集します。',
     'edit.langhint.ja':'いま日本語の内容を編集しています。空欄のままにすると保存時に自動翻訳されます。',
     'edit.changed':'変更したチーム {n}', 'edit.cancel':'キャンセル', 'edit.save':'保存…', 'edit.json':'JSONをコピー', 'edit.addteam':'チームを追加', 'edit.delteam':'このチームを削除',
-    'edit.teamname':'チーム名', 'edit.sitetitle':'サイトのタイトル', 'edit.intro':'紹介文', 'edit.program':'プログラム名',
+    'edit.teamname':'チーム名', 'site.name':'私たちのTWA', 'edit.sitetitle':'トップの見出し（Welcomeの下）', 'edit.intro':'トップの紹介文', 'edit.program':'プログラム名（上のバナー）',
     'edit.teampw':'チームのパスワード（生徒用）', 'edit.teampw.ph':'空欄なら生徒は編集不可', 'edit.teamid':'チームID',
     'edit.onlyown':'{team}チームのページだけ編集できます。',
     'login.h':'パスワード', 'login.d':'先生のパスワード、または自分のチームのパスワードを入れてください。', 'login.go':'入る', 'login.wrong':'パスワードが違います。', 'login.fail':'サーバーに接続できませんでした。しばらくしてからもう一度お試しください。', 'login.ok.team':'{team}チームとして入りました。', 'login.ok.teacher':'先生として入りました。',
@@ -126,6 +126,7 @@ function migrate(d){
   if (!d || !Array.isArray(d.teams)) return d;
   if (!d.site) d.site = {};
   if (!d.site.notice || typeof d.site.notice !== 'object') d.site.notice = {ko:'', ja:''};
+  if (!Array.isArray(d.site.channels)) d.site.channels = [];
   d.teams.forEach(team => {
     team.versions.forEach(v => {
       const c = v.fields && v.fields.comm; if (!c) return;
@@ -275,7 +276,7 @@ function banner(){
     <div class="top">
       <a class="logo" href="#/">
         <div class="prog">☆ ${esc(t(D.site.program))} ☆</div>
-        <h1>${esc(t(D.site.title))}</h1>
+        <h1>${lbl('site.name')}</h1>
         <div class="en">♡ Team Working Agreement ♡</div>
       </a>
       <div class="tools">
@@ -291,6 +292,7 @@ function banner(){
   <nav class="nav">
     <a href="#/">${lbl('nav.home')}</a>
     <a href="#/" data-action="goto" data-target="overview">${lbl('nav.overview')}</a>
+    <a class="pink" href="#/" data-action="goto" data-target="channels">${lbl('nav.channels')}</a>
     <span class="spacer"></span>
     <span class="status">${state.loading ? lbl('loading') : 'since 2026.9.16'}</span>
   </nav>`;
@@ -377,6 +379,20 @@ function renderHome(){
     .map(x => `<div class="note">${tv(x.o)}<span class="by">— ${esc(t(x.team.name))}</span></div>`).join('');
   const chips = teams.map(team => { const arr = latest(team).fields.comm.channels || []; return `<div class="chanrow"><a class="tn" href="#/t/${encodeURIComponent(team.id)}">${esc(t(team.name)) || lbl('newteam.name')}</a><span class="chips">${arr.length ? arr.map(chanChip).join('') : `<span style="color:var(--ink-3);font-size:13px">${lbl('empty')}</span>`}</span></div>`; }).join('');
 
+  const allArr = D.site.channels || [];
+  const allChan = state.editing && isTeacher()
+    ? `<div class="chanrow all edit"><span class="tn">${lbl('channels.all.edit')}</span><div class="chan-edit">
+        <div class="chan-head"><span>${lbl('chan.name')}</span><span>${lbl('chan.url')}</span><span></span></div>
+        ${allArr.map((c,i) => `<div class="chan-row">
+            <input class="fi" type="text" list="chanlist" data-chan="${i}/name" value="${esc(c[state.lang] || '')}" placeholder="${lbl('chan.name')}"${state.lang === 'ja' && c.ko ? ` title="${esc(c.ko)}"` : ''}>
+            <input class="fi" type="url" data-chan="${i}/url" value="${esc(c.url || '')}" placeholder="${lbl('chan.url.ph')}">
+            <button class="btn danger sm" data-action="chan-del" data-i="${i}" title="✕">✕</button>
+          </div>`).join('')}
+        <datalist id="chanlist">${CHANNELS.map(c => `<option value="${esc(t(c))}">`).join('')}</datalist>
+        <div><button class="btn sm" data-action="chan-addrow">＋ ${lbl('chan.addrow')}</button></div>
+      </div></div>`
+    : `<div class="chanrow all"><span class="tn">${lbl('channels.all')}</span><span class="chips">${allArr.filter(c => t(c)).length ? allArr.filter(c => t(c)).map(chanChip).join('') : `<span style="color:var(--ink-3);font-size:13px">${lbl('empty')}</span>`}</span></div>`;
+
   const siteEdit = state.editing && isTeacher() ? `<div class="team-edit" style="margin-top:18px">
       <div><label>${lbl('edit.program')}</label>${textField('site/program', D.site.program, {short:true})}</div>
       <div><label>${lbl('edit.sitetitle')}</label>${textField('site/title', D.site.title, {short:true})}</div>
@@ -412,8 +428,8 @@ function renderHome(){
         <div class="grid">${cards}${addCard}${noTeams}</div>
         <div class="sec-head" id="overview"><span class="ribbon mint">${lbl('wall.h')}</span></div>
         <div class="wall">${wall}</div>
-        <div class="sec-head"><span class="ribbon lav">${lbl('channels.h')}</span></div>
-        <div class="chanlist">${chips}</div>
+        <div class="sec-head" id="channels"><span class="ribbon lav">${lbl('channels.h')}</span></div>
+        <div class="chanlist">${allChan}${chips}</div>
       </div>
     </div>
     ${footer()}
@@ -798,8 +814,9 @@ document.addEventListener('click', e => {
   else if (a === 'addteam') addTeam();
   else if (a === 'delteam'){ const team = curTeam(); if (team) deleteTeam(team); }
   else if (a === 'chan-addrow' || a === 'chan-del'){
-    const team = curTeam(); if (!team || !canEditTeam(team.id)) return;
-    const arr = latest(team).fields.comm.channels || (latest(team).fields.comm.channels = []);
+    let arr;
+    if (route().page === 'home'){ if (!state.draft || !isTeacher()) return; arr = state.draft.site.channels || (state.draft.site.channels = []); }
+    else { const team = curTeam(); if (!team || !canEditTeam(team.id)) return; arr = latest(team).fields.comm.channels || (latest(team).fields.comm.channels = []); }
     if (a === 'chan-del') arr.splice(+el.dataset.i, 1); else arr.push({ko:'', ja:'', url:''});
     render(); updateCount();
     if (a === 'chan-addrow'){ const inputs = document.querySelectorAll('[data-chan$="/name"]'); const last = inputs[inputs.length-1]; if (last) last.focus(); }
@@ -817,8 +834,10 @@ document.addEventListener('click', e => {
 document.addEventListener('input', e => {
   const el = e.target; if (!el.dataset || !state.draft) return;
   if (el.dataset.chan){
-    const team = state.draft.teams.find(x => x.id === route().id); if (!team) return;
-    const arr = latest(team).fields.comm.channels; const [i, f] = el.dataset.chan.split('/'); const c = arr[+i]; if (!c) return;
+    let arr;
+    if (route().page === 'home'){ if (!isTeacher()) return; arr = state.draft.site.channels || []; }
+    else { const team = state.draft.teams.find(x => x.id === route().id); if (!team) return; arr = latest(team).fields.comm.channels; }
+    const [i, f] = el.dataset.chan.split('/'); const c = arr[+i]; if (!c) return;
     if (f === 'url') c.url = el.value;
     else {
       c[state.lang] = el.value;

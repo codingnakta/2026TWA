@@ -91,6 +91,9 @@ h1,h2,h3{margin:0; text-wrap:balance; font-family:var(--display); font-weight:40
 .nav a{color:var(--pink-ink); display:inline-flex; align-items:center; gap:5px; font-family:var(--kedu); font-weight:700}
 .nav a::before{content:"✿"; color:var(--pink); font-size:14px}
 .nav a:hover{color:var(--mint-ink)}
+.nav a.pink{background:var(--pink-2); color:#fff; padding:1px 14px; border-radius:999px; box-shadow:2px 2px 0 var(--pink-soft)}
+.nav a.pink::before{content:"♡"; color:#fff}
+.nav a.pink:hover{background:var(--pink-ink); color:#fff}
 .nav .spacer{flex:1}
 .nav .status{font-size:12.5px; color:var(--ink-2); font-family:var(--body)}
 
@@ -323,6 +326,12 @@ button.seal{padding:0; font:inherit; font-family:var(--display); font-size:11px}
 .chanrow{display:grid; grid-template-columns:minmax(90px,130px) 1fr; gap:6px 12px; align-items:center; padding:8px 12px; background:#F6FDFC; border:2px dotted var(--mint-2); border-radius:12px}
 .chanrow .tn{font-family:var(--kedu); font-weight:700; color:var(--pink-ink); font-size:15px}
 .chanrow .tn:hover{color:var(--mint-ink)}
+.chanrow.all{background:var(--pink-soft); border:2px solid var(--pink); box-shadow:3px 3px 0 var(--pink-soft)}
+.chanrow.all .tn{color:var(--pink-ink)}
+.chanrow.all .tn::before{content:"♡ "; color:var(--pink-2)}
+.chanrow.all .chips .chip{background:var(--pink-2); color:#fff}
+.chanrow.all .chips .chip.link:hover{background:var(--pink-ink)}
+.chanrow.all.edit{grid-template-columns:1fr}
 @media (max-width:640px){ .chanrow{grid-template-columns:1fr} }
 
 /* channel rows */
