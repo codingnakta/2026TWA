@@ -29,8 +29,8 @@ const L = {
     'confirm.h':'확인', 'confirm.yes':'네, 나갈게요', 'confirm.no':'계속 편집', 'confirm.ok':'네', 'confirm.cancel':'아니오',
     'ver':'제{n}차', 'ver.short':'{n}차', 'ver.first':'최초 작성', 'ver.history':'변화 과정',
     'diff.toggle':'변경 사항 보기', 'diff.sum':'이전 버전에서 {n}개 항목이 바뀌었어요', 'diff.none':'이전 버전과 같아요', 'prev':'이전',
-    'sample':'예시', 'sample.banner':'지금 보이는 팀은 예시 데이터예요. 편집에서 지우고 실제 팀을 넣으면 사라져요.',
-    'demo.banner':'데모 모드예요. 편집은 해볼 수 있지만 새로고침하면 사라져요. 데모 비밀번호: 선생님 teacher / 하루하루 haru / 코드보리 bori',
+    'notice.h':'공지사항', 'notice.empty':'아직 공지가 없어요.', 'edit.notice':'공지사항 (선생님만 편집)', 'teams.empty':'아직 등록된 팀이 없어요.',
+    'demo.banner':'데모 모드예요. 편집은 해볼 수 있지만 새로고침하면 사라져요. 데모 비밀번호: 선생님 teacher',
     'loading':'불러오는 중…',
     'auto':'자동 번역', 'auto.pending':'번역 대기', 'auto.hint':'한국어를 고치고 저장하면 일본어는 자동으로 번역돼요. 일본어 칸을 직접 고치면 그 내용이 우선이에요.',
     'member':'팀원', 'member.role':'역할', 'member.name':'이름', 'member.add':'팀원 추가', 'member.remove':'이 팀원 빼기', 'member.former':'이전 팀원', 'member.min':'팀원은 최소 2명이에요.', 'member.max':'팀원은 최대 4명이에요.',
@@ -72,8 +72,8 @@ const L = {
     'confirm.h':'確認', 'confirm.yes':'はい、離れます', 'confirm.no':'編集を続ける', 'confirm.ok':'はい', 'confirm.cancel':'いいえ',
     'ver':'第{n}版', 'ver.short':'第{n}版', 'ver.first':'初回作成', 'ver.history':'変化の記録',
     'diff.toggle':'変更点を表示', 'diff.sum':'前の版から{n}項目が変わりました', 'diff.none':'前の版と同じです', 'prev':'前回',
-    'sample':'サンプル', 'sample.banner':'表示中のチームはサンプルデータです。編集で削除して実際のチームを入れると消えます。',
-    'demo.banner':'デモモードです。編集は試せますが、再読み込みすると消えます。デモ用パスワード：先生 teacher / ハルハル haru / コードボリ bori',
+    'notice.h':'お知らせ', 'notice.empty':'まだお知らせはありません。', 'edit.notice':'お知らせ（先生のみ編集）', 'teams.empty':'まだ登録されたチームはありません。',
+    'demo.banner':'デモモードです。編集は試せますが、再読み込みすると消えます。デモ用パスワード：先生 teacher',
     'loading':'読み込み中…',
     'auto':'自動翻訳', 'auto.pending':'翻訳待ち', 'auto.hint':'韓国語を直して保存すると日本語は自動で翻訳されます。日本語欄を直接直した場合はその内容が優先されます。',
     'member':'メンバー', 'member.role':'役割', 'member.name':'名前', 'member.add':'メンバーを追加', 'member.remove':'このメンバーを外す', 'member.former':'元メンバー', 'member.min':'メンバーは最低2人です。', 'member.max':'メンバーは最大4人です。',
@@ -124,6 +124,8 @@ const $app = document.getElementById('app');
 /* ---------- data shape / migration ---------- */
 function migrate(d){
   if (!d || !Array.isArray(d.teams)) return d;
+  if (!d.site) d.site = {};
+  if (!d.site.notice || typeof d.site.notice !== 'object') d.site.notice = {ko:'', ja:''};
   d.teams.forEach(team => {
     team.versions.forEach(v => {
       const c = v.fields && v.fields.comm; if (!c) return;
@@ -328,14 +330,13 @@ function textField(path, val, opts){
   const ph = state.lang === 'ja' && val && val.ko ? ` placeholder="${esc(val.ko)}"` : '';
   return opts && opts.short
     ? `<input class="fi" type="text" id="${id}" data-path="${p}" value="${esc(v)}"${ph}>`
-    : `<textarea class="fi" id="${id}" data-path="${p}" rows="2"${ph}>${esc(v)}</textarea>`;
+    : `<textarea class="fi" id="${id}" data-path="${p}" rows="${(opts && opts.rows) || 2}"${ph}>${esc(v)}</textarea>`;
 }
 function footer(){ return `<footer class="foot"><div class="lace">♡ ✿ ♡ ✿ ♡ ✿ ♡ ✿ ♡</div>${lbl('foot')}</footer>`; }
 function banners(){
   const D = data();
   let h = '';
   if (state.demo) h += `<div class="edit-banner">★ ${lbl('demo.banner')}</div>`;
-  if (D.teams.some(x => x.sample) && !state.editing) h += `<div class="edit-banner">★ ${lbl('sample.banner')}</div>`;
   return h;
 }
 
@@ -349,13 +350,20 @@ function renderHome(){
     return `<a class="card" href="#/t/${encodeURIComponent(team.id)}">
       <span class="tape tl"></span>
       <div class="head"><div>
-        <h3>${esc(t(team.name)) || lbl('newteam.name')} ${team.sample ? `<span class="chip sample">${lbl('sample')}</span>` : ''}${isNew(v.date) ? `<span class="tag-new">NEW!</span>` : ''}</h3>
+        <h3>${esc(t(team.name)) || lbl('newteam.name')} ${isNew(v.date) ? `<span class="tag-new">NEW!</span>` : ''}</h3>
         ${members(team)}
       </div>${sticker(team)}</div>
       <ul class="promises">${ps}</ul>
     </a>`;
   }).join('');
   const addCard = state.editing && isTeacher() ? `<button class="card add" data-action="addteam">＋ ${lbl('edit.addteam')}</button>` : '';
+  const noTeams = !teams.length && !addCard ? `<div class="none">${lbl('teams.empty')}</div>` : '';
+
+  const noticeBody = state.editing && isTeacher()
+    ? `<div class="team-edit" style="margin-top:0"><div style="grid-column:1/-1"><label>${lbl('edit.notice')}</label>${textField('site/notice', D.site.notice, {rows:5})}</div></div>`
+    : (t(D.site.notice) ? tv(D.site.notice) : `<span class="empty">${lbl('notice.empty')}</span>`);
+  const notice = `<div class="sec-head" style="margin-top:0"><span class="ribbon kedu">${lbl('notice.h')}</span></div>
+        <div class="notice"><span class="tape tl"></span>${noticeBody}</div>`;
 
   const nTeams = teams.length;
   const nAgree = teams.filter(x => latest(x).fields.feedback.principle === true).length;
@@ -399,8 +407,9 @@ function renderHome(){
         </div>
       </aside>
       <div>
-        <div class="sec-head" style="margin-top:0"><span class="ribbon kedu">${lbl('teams.h')}</span><span class="count">${nTeams}</span></div>
-        <div class="grid">${cards}${addCard}</div>
+        ${notice}
+        <div class="sec-head"><span class="ribbon kedu">${lbl('teams.h')}</span><span class="count">${nTeams}</span></div>
+        <div class="grid">${cards}${addCard}${noTeams}</div>
         <div class="sec-head" id="overview"><span class="ribbon mint">${lbl('wall.h')}</span></div>
         <div class="wall">${wall}</div>
         <div class="sec-head"><span class="ribbon lav">${lbl('channels.h')}</span></div>
@@ -527,7 +536,7 @@ function renderTeam(team){
   return `<div class="page">${banner()}${banners()}
   <main class="wrap">
     <div class="team-head">
-      <h1>${esc(t(team.name)) || lbl('newteam.name')} ${team.sample ? `<span class="chip sample">${lbl('sample')}</span>` : ''}</h1>
+      <h1>${esc(t(team.name)) || lbl('newteam.name')}</h1>
       ${members(team)}
       ${notMine}
       ${teamEdit}

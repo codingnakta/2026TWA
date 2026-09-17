@@ -7,9 +7,11 @@
 //   POST { action:'save', password, team }    팀: 자기 팀만 저장
 //
 // 환경변수 (Netlify → Site configuration → Environment variables)
-//   TWA_TEACHER_PASSWORD  선생님 비밀번호 (필수)
 //   DEEPL_API_KEY         DeepL API 키 (선택, 있으면 일본어 자동 번역)
 import { getStore } from '@netlify/blobs';
+
+// 선생님 비밀번호 (하드코딩). 팀 비밀번호는 선생님이 편집 화면에서 정하고 Blobs 에 저장됩니다.
+const TEACHER_PASSWORD = 'teacher';
 
 const json = (o, status = 200) => new Response(JSON.stringify(o), {
   status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' }
@@ -28,11 +30,11 @@ export default async (req) => {
   try { body = await req.json(); } catch { return json({ ok: false, error: 'bad_json' }, 400); }
 
   const pw = String(body.password || '').trim();
-  const teacherPw = (process.env.TWA_TEACHER_PASSWORD || '').trim();
+  const teacherPw = TEACHER_PASSWORD;
   const passwords = (await store.get('passwords', { type: 'json' })) || {};
 
   let auth = null;
-  if (pw && teacherPw && pw === teacherPw) auth = { role: 'teacher' };
+  if (pw && pw === teacherPw) auth = { role: 'teacher' };
   else if (pw) {
     const id = Object.keys(passwords).find(k => passwords[k] && String(passwords[k]).trim() === pw);
     if (id) auth = { role: 'team', teamId: id };
