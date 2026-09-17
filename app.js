@@ -10,8 +10,8 @@ const DEMO_PW = CONFIG.DEMO_PASSWORDS || null;
 
 const L = {
   ko: {
-    'nav.home':'전체 팀', 'nav.overview':'모아보기', 'nav.channels':'전체 소통 채널', 'channels.all':'전체 소통 채널', 'channels.all.edit':'전체 소통 채널 (선생님만 편집)',
-    'teams.h':'팀별 TWA', 'wall.h':'모든 팀의 약속', 'channels.h':'우리가 쓰는 소통 채널', 'update.h':'Update', 'counter.h':'Counter',
+    'nav.home':'전체 팀', 'nav.channels':'전체 소통 채널', 'channels.all':'전체 소통 채널', 'channels.all.edit':'전체 소통 채널 (선생님만 편집)',
+    'teams.h':'팀별 TWA', 'channels.h':'우리가 쓰는 소통 채널', 'update.h':'Update', 'counter.h':'Counter',
     'stat.teams':'팀', 'stat.principle':'"결과물에 대한 피드백" 원칙 동의', 'stat.revisions':'해보고 나서 고친 횟수',
     'upd.first':'『{team}』 TWA 최초 작성', 'upd.rev':'『{team}』 제{n}차 개정',
     'sec.comm':'우리는 이렇게 소통한다', 'sec.feedback':'피드백은 이렇게 준다', 'sec.decision':'결정이 안 날 때',
@@ -53,8 +53,8 @@ const L = {
     'foot':'Team Working Agreement ☆ 팀이 스스로 정하고, 해보고, 고친 기록'
   },
   ja: {
-    'nav.home':'全チーム', 'nav.overview':'まとめ', 'nav.channels':'全体の連絡チャンネル', 'channels.all':'全体の連絡チャンネル', 'channels.all.edit':'全体の連絡チャンネル（先生のみ編集）',
-    'teams.h':'チーム別TWA', 'wall.h':'全チームの約束', 'channels.h':'使っている連絡チャンネル', 'update.h':'Update', 'counter.h':'Counter',
+    'nav.home':'全チーム', 'nav.channels':'全体の連絡チャンネル', 'channels.all':'全体の連絡チャンネル', 'channels.all.edit':'全体の連絡チャンネル（先生のみ編集）',
+    'teams.h':'チーム別TWA', 'channels.h':'使っている連絡チャンネル', 'update.h':'Update', 'counter.h':'Counter',
     'stat.teams':'チーム', 'stat.principle':'「成果物へのフィードバック」原則に同意', 'stat.revisions':'やってみて直した回数',
     'upd.first':'『{team}』TWA 初回作成', 'upd.rev':'『{team}』第{n}版に改訂',
     'sec.comm':'私たちはこうコミュニケーションする', 'sec.feedback':'フィードバックはこう伝える', 'sec.decision':'決まらないとき',
@@ -291,7 +291,6 @@ function banner(){
   </header>
   <nav class="nav">
     <a href="#/">${lbl('nav.home')}</a>
-    <a href="#/" data-action="goto" data-target="overview">${lbl('nav.overview')}</a>
     <a class="pink" href="#/" data-action="goto" data-target="channels">${lbl('nav.channels')}</a>
     <span class="spacer"></span>
     <span class="status">${state.loading ? lbl('loading') : 'since 2026.9.16'}</span>
@@ -375,8 +374,6 @@ function renderHome(){
   const upd = events.map(e => `<li><span class="d">${esc(e.date || '')}${isNew(e.date) ? `<span class="tag-new">NEW!</span>` : ''}</span>
       <span class="w"><a href="#/t/${encodeURIComponent(e.team.id)}"><b>${e.v.v === 1 ? lbl('upd.first',{team:esc(t(e.team.name))}) : lbl('upd.rev',{team:esc(t(e.team.name)), n:e.v.v})}</b></a>${e.v.v > 1 && t(e.v.note) ? `<small>${esc(t(e.v.note))}</small>` : ''}</span></li>`).join('');
 
-  const wall = teams.flatMap(team => ['p1','p2','p3'].map(k => ({team, o:latest(team).fields.promises[k]}))).filter(x => t(x.o))
-    .map(x => `<div class="note">${tv(x.o)}<span class="by">— ${esc(t(x.team.name))}</span></div>`).join('');
   const chips = teams.map(team => { const arr = latest(team).fields.comm.channels || []; return `<div class="chanrow"><a class="tn" href="#/t/${encodeURIComponent(team.id)}">${esc(t(team.name)) || lbl('newteam.name')}</a><span class="chips">${arr.length ? arr.map(chanChip).join('') : `<span style="color:var(--ink-3);font-size:13px">${lbl('empty')}</span>`}</span></div>`; }).join('');
 
   const allArr = D.site.channels || [];
@@ -426,8 +423,6 @@ function renderHome(){
         ${notice}
         <div class="sec-head"><span class="ribbon kedu">${lbl('teams.h')}</span><span class="count">${nTeams}</span></div>
         <div class="grid">${cards}${addCard}${noTeams}</div>
-        <div class="sec-head" id="overview"><span class="ribbon mint">${lbl('wall.h')}</span></div>
-        <div class="wall">${wall}</div>
         <div class="sec-head" id="channels"><span class="ribbon lav">${lbl('channels.h')}</span></div>
         <div class="chanlist">${allChan}${chips}</div>
       </div>
