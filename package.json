@@ -1,0 +1,10 @@
+{
+  "name": "2026twa",
+  "private": true,
+  "version": "1.0.0",
+  "description": "우리의 TWA — 2026 일본 글로벌 방과후 Team Working Agreement",
+  "type": "module",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}
